@@ -291,11 +291,11 @@ void calculate( void )
         LONGDIV( c, j );
 
 //        SUBTRACT( a, c, a );
+        SUBTRACT_FUSIONED(a, c, a, b, c, b);
         DIVIDE_25( a, 25 );
 
 //        SUBTRACT( b, c, b );
-        SUBTRACT_FUSIONED(a, c, a, b, c, b);
-        DIVIDE_TWO_TIMES( b, 239 );
+        DIVIDE_TWO_TIMES_239( b, 239 );
 
         progress();
     }

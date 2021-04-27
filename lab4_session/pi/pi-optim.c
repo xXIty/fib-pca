@@ -93,7 +93,7 @@ void DIVIDE_239( signed char *x, int n )
 }
 
 
-void DIVIDE_TWO_TIMES( signed char *x, int n )
+void DIVIDE_TWO_TIMES_239( signed char *x, int n )
 {                                                
     int j, k;
     unsigned q, r1, r2, u;

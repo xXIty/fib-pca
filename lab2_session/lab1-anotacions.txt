@@ -1,0 +1,72 @@
+Marc Clascà Ramírez
+
+1.1.2 Experiments I/O 
+	Escriptura a HOME
+marc.clasca@a5s113pc55:~/dades/linux/PCA/lab2_session> /usr/bin/time ./popul > ~/test
+2.21user 0.03system 0:02.79elapsed 80%CPU (0avgtext+0avgdata 1200maxresident)k
+0inputs+97664outputs (1major+63minor)pagefaults 0swaps
+
+	Escriptura a DADES
+marc.clasca@a5s113pc55:~/dades/linux/PCA/lab2_session> /usr/bin/time ./popul > ~/dades/test
+2.52user 0.13system 2:31.28elapsed 1%CPU (0avgtext+0avgdata 1212maxresident)k
+0inputs+0outputs (1major+65minor)pagefaults 0swaps
+
+	Escriptura a disc dur local
+marc.clasca@a5s113pc55:~/dades/linux/PCA/lab2_session> /usr/bin/time ./popul > /tmp/test
+2.20user 0.00system 0:02.29elapsed 96%CPU (0avgtext+0avgdata 1196maxresident)k
+0inputs+0outputs (1major+62minor)pagefaults 0swaps
+
+L'execució que ha escrit al disc DADES ha trigat un total 2 minuts i 30 segons, però nomes ha utilitzat la CPU un 1% del temps. Això és degut a que l'escriptura al disc de xarxa és molt lenta. També veiem això en menys mesura al disc HOME, que també és un disc en xarxa però utilitza un sistema de fitxers en xarxa diferent, i sembla que va més ràpid ja que la utilització de la CPU només ha baixat fins al 80%. En canvi, l'execució que ha escrit a /tmp, es a dir, al disc dur de la màquina local, ha acabat més ràpid i el temps d'espera de I/O és molt menor, tenint un impacte només del 4% del temps.
+
+1.1.3 Golden output
+He guardat el golden output amb l'execucio de pi.O0
+El temps del golden output son els següents:
+marc.clasca@a5s113pc55:~/dades/linux/PCA/lab2_session> /usr/bin/time -f "%e" ./pi.O0 > /tmp/test
+7.23
+marc.clasca@a5s113pc55:~/dades/linux/PCA/lab2_session> /usr/bin/time -f "%e" ./pi.O0 > /tmp/test
+7.26
+marc.clasca@a5s113pc55:~/dades/linux/PCA/lab2_session> /usr/bin/time -f "%e" ./pi.O0 > /tmp/test
+7.26
+marc.clasca@a5s113pc55:~/dades/linux/PCA/lab2_session> /usr/bin/time -f "%e" ./pi.O0 > /tmp/test
+7.20
+marc.clasca@a5s113pc55:~/dades/linux/PCA/lab2_session> /usr/bin/time -f "%e" ./pi.O0 > /tmp/test
+7.17
+
+Que resulta en una mitjana de 7.224s i una desviació estandard de  0.035. Aquest serà el nostre temps de referència quan comparem les optimitzacions.
+En aquest cas els temps d'execució també varien segons si escrivim la sortida als discos de xarxa o al disc dur local. Per al temps de referència hem fet l'escriptura al disc local /tmp
+
+Amb "perf stat" també podem obtenir aquesta informació i indicar el numero de repeticions perquè automàticament ens faci la mitjana i la desviació estandard de les mètriques.
+marc.clasca@a5s113pc55:~/dades/linux/PCA/lab2_session> perf stat -r 5 ./pi.O0 > /tmp/ssssss
+
+ Performance counter stats for './pi.O0' (5 runs):
+
+           7139.80 msec task-clock                #    0.989 CPUs utilized            ( +-  0.08% )
+                20      context-switches          #    0.003 K/sec                    ( +-  6.12% )
+                 0      cpu-migrations            #    0.000 K/sec                  
+                58      page-faults               #    0.008 K/sec                    ( +-  1.38% )
+       24218610827      cycles                    #    3.392 GHz                      ( +-  0.08% )
+       21154887711      instructions              #    0.87  insn per cycle           ( +-  0.00% )
+         917001952      branches                  #  128.435 M/sec                    ( +-  0.00% )
+         109682933      branch-misses             #   11.96% of all branches          ( +-  0.02% )
+
+            7.2196 +- 0.0172 seconds time elapsed  ( +-  0.24% )
+
+
+
+I finalment, també tenim Ocount (dins del paquet Operf) per fer accounting i mesurar comptadors hardware. Concretament podem veure el número de cicles amb:
+PCA/lab2_session> ocount --event=cpu_clk_unhalted ./pi.O0 > /tmp/asafio
+Events were actively counted for 7.1 seconds.
+Event counts (actual) for /dades/marc.clasca/linux/PCA/lab2_session/pi.O0:
+        Event                           Count                    % time counted
+        cpu_clk_unhalted                24,201,103,801           100.00
+
+COMPTE! Ocount escriu el resultat de les mesures a stdout, per tant si redirigim la sortida de pi també haurem d'anar a buscar els resultats allà.
+
+1.1.4
+Finalment he comprovat que l'execució amb els diferents nivells d'optimització de GCC retorna el mateix resultat que el golden output.
+Speedup user+system de O3 respecte O0: 2.31x
+Speedup elapsed de O3 respecte O0: 2.30x
+
+1.2 Profiling
+
+

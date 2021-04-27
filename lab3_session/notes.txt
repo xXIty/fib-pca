@@ -1,0 +1,26 @@
+
+PI
+===
+pi.c compilat amb O3 ens dona un speedup de 2.3x respecte verió O0.
+Output of optimized version is the same as the golden output
+
+Execution times for optimized code:
+CPU      ->   Min: 3.050000 Max: 3.060000 Average: 3.054000
+Elapsed  ->   Min: 3.080000 Max: 3.130000 Average: 3.100000
+
+Execution times for original code:
+CPU      ->   Min: 7.110000 Max: 7.110000 Average: 7.110000
+Elapsed  ->   Min: 7.130000 Max: 7.180000 Average: 7.152000
+
+Speedup of elapsed time: 2.307x
+Speedup of CPU time:     2.328x
+
+
+Output de perf report de la versio O0:
+Overhead       Samples  Command  Shared Object      Symbol
+  53.34%         15389  pi.g0    pi.g0              [.] DIVIDE                                                                                                                    ▒
+  23.84%          6878  pi.g0    pi.g0              [.] SUBTRACT                                                                                                                  ▒
+  22.30%          6432  pi.g0    pi.g0              [.] LONGDIV  
+
+En canvi, amb la versio O3 tot l'verhead s'imputa a la funcio calculate perque el compilador ha aplicat inlining.
+A part, en la funcio optimitzada el compilador ha utilitzat instruccions idiv en comptes de div.

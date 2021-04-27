@@ -1,0 +1,26 @@
+Running executable ./primers.3 with arguments ""  5 times:
+Run number 1
+Run number 2
+Run number 3
+Run number 4
+Run number 5
+
+Running executable ./primers.0 with arguments "" 5 times:
+Run number 1
+Run number 2
+Run number 3
+Run number 4
+Run number 5
+
+Output of optimized version is the same as the golden output
+
+Execution times for optimized code:
+CPU      ->   Min: 0.070000 Max: 0.080000 Average: 0.078000
+Elapsed  ->   Min: 0.080000 Max: 0.090000 Average: 0.082000
+
+Execution times for original code:
+CPU      ->   Min: 0.630000 Max: 0.640000 Average: 0.638000
+Elapsed  ->   Min: 0.640000 Max: 0.650000 Average: 0.644000
+
+Speedup of elapsed time: 7.853x
+Speedup of CPU time:     8.179x

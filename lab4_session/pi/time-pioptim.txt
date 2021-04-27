@@ -1,0 +1,13 @@
+Running executable ./pi-optim.g3 with arguments ""  5 times:
+Run number 1
+Run number 2
+Run number 3
+Run number 4
+Run number 5
+
+Running executable  with arguments "" 5 times:
+
+Execution times for optimized code:
+CPU      ->   Min: 2.230000 Max: 2.280000 Average: 2.242000
+Elapsed  ->   Min: 2.230000 Max: 2.290000 Average: 2.248000
+

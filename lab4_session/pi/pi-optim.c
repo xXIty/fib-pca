@@ -197,28 +197,37 @@ void SUBTRACT_FUSIONED( signed char *x, signed char *y, signed char *z, signed c
     int j, k;
     unsigned q, r, u;
     long v;
+    int x_is_neg_mask;
+    int xx_is_neg_mask;
+
     for( k = N4; k >= 1; k-- )                   
     {                                            
-        if( (x[k] = y[k] - z[k]) < 0 )           
-        {                                        
-            x[k] += 10;                          
-            z[k-1]++;                            
-        }                                        
+        //  if( (x[k] = y[k] - z[k]) < 0 )           
+        x[k]           =   y[k] - z[k];          
+        x_is_neg_mask  =   x[k]>>(sizeof(x[k])*8);
+
+        x[k]          +=   10 & x_is_neg_mask;  
+        z[k-1]        +=   1  & x_is_neg_mask;  
+        
         // FUSIO
-        if( (xx[k] = yy[k] - zz[k]) < 0 )           
-        {                                        
-            xx[k] += 10;                          
-            zz[k-1]++;                            
-        }                                        
+        //  if( (xx[k] = yy[k] - zz[k]) < 0 )           
+        xx[k]           =   yy[k] - zz[k];
+        xx_is_neg_mask  =   xx[k]>>(sizeof(xx[k])*8);
+
+        xx[k]          +=   10 & xx_is_neg_mask;                
+        zz[k-1]        +=   1  & xx_is_neg_mask;                
     }                                            
-    if( (x[k] = y[k] - z[k]) < 0 )           
-    {                                        
-        x[k] += 10;                          
-    }                                        
-    if( (xx[k] = yy[k] - zz[k]) < 0 )           
-    {                                        
-        xx[k] += 10;                          
-    }                                        
+
+
+    //  if( (x[k] = y[k] - z[k]) < 0 )           
+    x[k]           =   y[k] - z[k];          
+    x_is_neg_mask  =   x[k]>>(sizeof(x[k])*8);
+    x[k]          +=   10 & x_is_neg_mask;  
+
+    //  if( (xx[k] = yy[k] - zz[k]) < 0 )           
+    xx[k]           =   yy[k] - zz[k];
+    xx_is_neg_mask  =   xx[k]>>(sizeof(xx[k])*8);
+    xx[k]          +=   10 & xx_is_neg_mask;                
 }
 
 void calculate( void );

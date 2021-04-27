@@ -23,23 +23,13 @@ void DIVIDE_5( signed char *x, int n )
     long v;
 
     r = 0;                                       
-    for( k = 0; k <= N4-2+1; k=k+2 )                  
+    for( k = 0; k <= N4; k++ )                  
     {                                            
         u = r_IMUL_10[r] + x[k];                       
         x[k] = u_DIV_5[u];                               
         r = u_MOD_5[u];                           
         
-        u = r_IMUL_10[r] + x[k+1];                       
-        x[k+1] = u_DIV_5[u];                               
-        r = u_MOD_5[u];                           
     }                                           
-    for( ; k <= N4; k++ )                  
-    {                                            
-        u = r_IMUL_10[r] + x[k];                       
-        x[k] = u_DIV_5[u];                               
-        r = u_MOD_5[u];                           
-    }
-
 }
 
 void DIVIDE_25( signed char *x, int n )
@@ -49,22 +39,13 @@ void DIVIDE_25( signed char *x, int n )
     long v;
 
     r = 0;                                       
-    for( k = 0; k <= N4-2+1; k=k+2 )                  
+    for( k = 0; k <= N4; k++ )                  
     {                                            
         u = r_IMUL_10[r] + x[k];                       
         x[k] = u_DIV_25[u];
         r = u_MOD_25[u];                           
         
-        u = r_IMUL_10[r] + x[k+1];                       
-        x[k+1] = u_DIV_25[u];
-        r = u_MOD_25[u];                           
     }                                           
-    for( ; k <= N4; k++ )                  
-    {                                            
-        u = r_IMUL_10[r] + x[k];                       
-        x[k] = u_DIV_25[u];
-        r = u_MOD_25[u];                           
-    }
 }
 
 void DIVIDE_239( signed char *x, int n )
@@ -74,26 +55,17 @@ void DIVIDE_239( signed char *x, int n )
     long v;
 
     r = 0;                                       
-    for( k = 0; k <= N4-2+1; k=k+2 )                  
+    for( k = 0; k <= N4; k++ )                  
     {                                            
         u = r_IMUL_10[r] + x[k];                       
         x[k] = u_DIV_239[u];                               
         r = u_MOD_239[u];                           
         
-        u = r_IMUL_10[r] + x[k+1];                       
-        x[k+1] = u_DIV_239[u];                               
-        r = u_MOD_239[u];                           
     }                                           
-    for( ; k <= N4; k++ )                  
-    {                                            
-        u = r_IMUL_10[r] + x[k];                       
-        x[k] = u_DIV_239[u];                               
-        r = u_MOD_239[u];                           
-    }
 }
 
 
-void DIVIDE_TWO_TIMES_239( signed char *x, int n )
+void DIVIDE_TWO_TIMES( signed char *x, int n )
 {                                                
     int j, k;
     unsigned q, r1, r2, u;
@@ -192,34 +164,6 @@ void SUBTRACT( signed char *x, signed char *y, signed char *z )
     }                                        
 }
 
-void SUBTRACT_FUSIONED( signed char *x, signed char *y, signed char *z, signed char *xx, signed char *yy, signed char *zz )                      
-{                                                
-    int j, k;
-    unsigned q, r, u;
-    long v;
-    for( k = N4; k >= 1; k-- )                   
-    {                                            
-        if( (x[k] = y[k] - z[k]) < 0 )           
-        {                                        
-            x[k] += 10;                          
-            z[k-1]++;                            
-        }                                        
-        // FUSIO
-        if( (xx[k] = yy[k] - zz[k]) < 0 )           
-        {                                        
-            xx[k] += 10;                          
-            zz[k-1]++;                            
-        }                                        
-    }                                            
-    if( (x[k] = y[k] - z[k]) < 0 )           
-    {                                        
-        x[k] += 10;                          
-    }                                        
-    if( (xx[k] = yy[k] - zz[k]) < 0 )           
-    {                                        
-        xx[k] += 10;                          
-    }                                        
-}
 
 void calculate( void );
 void progress( void );
@@ -290,11 +234,10 @@ void calculate( void )
         SET( c, 1 );
         LONGDIV( c, j );
 
-//        SUBTRACT( a, c, a );
+        SUBTRACT( a, c, a );
         DIVIDE_25( a, 25 );
 
-//        SUBTRACT( b, c, b );
-        SUBTRACT_FUSIONED(a, c, a, b, c, b);
+        SUBTRACT( b, c, b );
         DIVIDE_TWO_TIMES( b, 239 );
 
         progress();

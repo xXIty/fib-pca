@@ -158,7 +158,17 @@ void MULTIPLY( signed char *x, int n )
     unsigned q, r, u;
     long v;
     r = 0;                                   
-    for( k = N4; k >= 0; k-- )               
+    for( k = N4; k >= 0+1; k=k-2 )               
+    {                                        
+        q = n * x[k] + r;                    
+        r = q / 10;                          
+        x[k] = q - r * 10;                   
+
+        q = n * x[k-1] + r;                    
+        r = q / 10;                          
+        x[k-1] = q - r * 10;                   
+    }                                        
+    for( ; k >= 0; k-- )               
     {                                        
         q = n * x[k] + r;                    
         r = q / 10;                          
@@ -192,6 +202,7 @@ void SUBTRACT( signed char *x, signed char *y, signed char *z )
     }                                        
 }
 
+// IN THIS FUSION, y = yy (see main)
 void SUBTRACT_FUSIONED( signed char *x, signed char *y, signed char *z, signed char *xx, signed char *yy, signed char *zz )                      
 {                                                
     int j, k;
@@ -200,7 +211,37 @@ void SUBTRACT_FUSIONED( signed char *x, signed char *y, signed char *z, signed c
     int x_is_neg_mask;
     int xx_is_neg_mask;
 
-    for( k = N4; k >= 1; k-- )                   
+    for( k = N4; k >= 1 +1; k=k-2 )                   
+    {                                            
+        //  if( (x[k] = y[k] - z[k]) < 0 )           
+        x[k]           =   y[k] - z[k];          
+        x_is_neg_mask  =   x[k]>>(sizeof(x[k])*8);
+
+        x[k]          +=   10 & x_is_neg_mask;  
+        z[k-1]        +=   1  & x_is_neg_mask;  
+        
+        x[k-1]           =   y[k-1] - z[k-1];          
+        x_is_neg_mask  =   x[k-1]>>(sizeof(x[k-1])*8);
+
+        x[k-1]          +=   10 & x_is_neg_mask;  
+        z[k-2]        +=   1  & x_is_neg_mask;  
+
+        // FUSIO
+        //  if( (xx[k] = yy[k] - zz[k]) < 0 )           
+        xx[k]           =   y[k] - zz[k];
+        xx_is_neg_mask  =   xx[k]>>(sizeof(xx[k])*8);
+
+        xx[k]          +=   10 & xx_is_neg_mask;                
+        zz[k-1]        +=   1  & xx_is_neg_mask;                
+
+        xx[k-1]           =   y[k-1] - zz[k-1];
+        xx_is_neg_mask  =   xx[k-1]>>(sizeof(xx[k-1])*8);
+
+        xx[k-1]          +=   10 & xx_is_neg_mask;                
+        zz[k-2]        +=   1  & xx_is_neg_mask;                
+    }                                            
+
+    for(; k >= 1; k-- )                   
     {                                            
         //  if( (x[k] = y[k] - z[k]) < 0 )           
         x[k]           =   y[k] - z[k];          
@@ -211,13 +252,12 @@ void SUBTRACT_FUSIONED( signed char *x, signed char *y, signed char *z, signed c
         
         // FUSIO
         //  if( (xx[k] = yy[k] - zz[k]) < 0 )           
-        xx[k]           =   yy[k] - zz[k];
+        xx[k]           =   y[k] - zz[k];
         xx_is_neg_mask  =   xx[k]>>(sizeof(xx[k])*8);
 
         xx[k]          +=   10 & xx_is_neg_mask;                
         zz[k-1]        +=   1  & xx_is_neg_mask;                
     }                                            
-
 
     //  if( (x[k] = y[k] - z[k]) < 0 )           
     x[k]           =   y[k] - z[k];          

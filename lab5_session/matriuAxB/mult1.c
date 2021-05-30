@@ -13,17 +13,32 @@ int B[N][N];
 void mult1(int C[][N], int B[][N], int A[][N], int n)
 {
 
+//  int i,j,k;
+//  int sum;
+//
+//  for ( i=0 ; i < n; i++ )
+//  {
+//    for ( j=0 ; j < n; j++ )
+//    {
+//      for ( k=0 ; k < n ; k++ )
+//         C[i][j]+= A[i][k]*B[k][j];
+//    }
+//  }
   int i,j,k;
-  int sum;
+  int ii,jj,kk;
 
-  for ( i=0 ; i < n; i++ )
-  {
-    for ( j=0 ; j < n; j++ )
-    {
-      for ( k=0 ; k < n ; k++ )
-         C[i][j]+= A[i][k]*B[k][j];
-    }
-  }
+   for ( i=0 ; i < n; i+=BS )
+   {
+     for ( k=0 ; k < n; k+=BS )
+     {
+       for ( j=0 ; j < n ; j++ )
+       {
+        for (ii=i;ii<i+BS;ii++)
+         for (kk=k;kk<k+BS;kk++)
+           C[ii][j]+= A[ii][kk]*B[kk][j];
+       }
+     }
+   }
 }
 
 void init(int A[][N], int n)

@@ -44,14 +44,19 @@ int main(int argc, char *argv[])
 {
 	Templeat *empleats_data;
   Tindex   *empleats_index;
+
+  Templeat *empleats_ordered;
   
-	unsigned int N = 2000000, i;
+	unsigned int N = 2000000, i, j;
+  int block = 100;
 
 	if (argc > 1) N = atoi(argv[1]);
+	if (argc > 2) block = atoi(argv[2]);
 
+  empleats_ordered  =  (Templeat  *)  malloc(block*sizeof(Templeat));
+  empleats_data     =  (Templeat  *)  malloc(N*sizeof(Templeat));
+  empleats_index    =  (Tindex    *)  malloc(N*sizeof(Tindex));
 
-	empleats_data  = (Templeat *) malloc(N*sizeof(Templeat));
-  empleats_index = (Tindex   *) malloc(N*sizeof(Tindex));
 	if (empleats_data == NULL) { fprintf(stderr, "Out of memory\n"); exit(0); }
 	memset(empleats_data, 0, N*sizeof(Templeat));
 
@@ -77,9 +82,16 @@ int main(int argc, char *argv[])
 	}
 
 	qsort(empleats_index, N, sizeof(Tindex), compare);
-	for (i=0; i<N; i++){
-	        write(1, &empleats_data[empleats_index[i].index],sizeof(Templeat));
+  i = 0;
+ 	for (i; i<N-block; i+=block){
+    for (j=0; j<block; ++j)
+      empleats_ordered[j] = empleats_data[empleats_index[i+j].index]; 
+    write(1, empleats_ordered, block*sizeof(Templeat));
+ 	}
+	for (j=0; i+j<N; j++){
+    empleats_ordered[j] = empleats_data[empleats_index[i+j].index]; 
 	}
+  write(1, empleats_ordered, j*sizeof(Templeat));
 
 	return 0;
 }

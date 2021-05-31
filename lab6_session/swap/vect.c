@@ -22,11 +22,12 @@ int main(int argc, char *argv[])
 
 
     int  n1;
+    int  res;
     __m256i *c1;
     __m256i *c1_out;
 
-    posix_memalign((void *)c1,      CACHE_ALIGNMENT,  count*sizeof(__m256i));
-    posix_memalign((void *)c1_out,  CACHE_ALIGNMENT,  count*sizeof(__m256i));
+    posix_memalign((void *)&c1,      CACHE_ALIGNMENT,  count*sizeof(__m256i));
+    posix_memalign((void *)&c1_out,  CACHE_ALIGNMENT,  count*sizeof(__m256i));
 
     // Vectorization code
     __m256i mask, out;

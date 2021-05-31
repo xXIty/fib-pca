@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <immintrin.h>
 
+#define CACHE_ALIGNMENT 64
+
 void panic(char *miss)
 {
         if (errno != 0) perror(miss);
@@ -23,8 +25,8 @@ int main(int argc, char *argv[])
     __m256i *c1;
     __m256i *c1_out;
 
-    c1     = (__m256i *) aligned_alloc(sizeof(__m256i), count*sizeof(__m256i));
-    c1_out = (__m256i *) aligned_alloc(sizeof(__m256i), count*sizeof(__m256i));
+    posix_memalign((void *)c1,      CACHE_ALIGNMENT,  count*sizeof(__m256i));
+    posix_memalign((void *)c1_out,  CACHE_ALIGNMENT,  count*sizeof(__m256i));
 
     // Vectorization code
     __m256i mask, out;
@@ -48,7 +50,7 @@ int main(int argc, char *argv[])
             ((char  *)c1_out)[i+j+1]  =  ((char  *)  c1)[i+j];
         }
         if (j < c1_chars_left)
-            ((char *)c1_out)[i+j]     = ((char *) c1)[i+j];
+            ((char *)c1_out)[i+j]     =  ((char  *) c1)[i+j];
 
         if (write(1, c1_out, n1) < 0) panic("write2");
     }

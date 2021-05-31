@@ -6,6 +6,7 @@
 #include <immintrin.h>
 
 #define CACHE_ALIGNMENT 64
+#define GRAINSIZE 4
 
 void panic(char *miss)
 {
@@ -17,7 +18,7 @@ void panic(char *miss)
 
 int main(int argc, char *argv[])
 {
-    int count = 100;
+    int count = 1000;
     if (argc == 2) count = atoi(argv[1]);
 
 
@@ -36,13 +37,14 @@ int main(int argc, char *argv[])
     {
         int i, j;
         int c1_chars_left = n1 & 0xF;
-        int c1_size       = n1 / sizeof(* c1); 
+        int c1_size       = n1 >> GRAINSIZE;// / sizeof(* c1); 
 
         for (i=0; i<c1_size; i++) {
             c1_out[i] = _mm_shuffle_epi8(c1[i], mask);
         }
 
-        i *= sizeof(* c1);
+        // i *= sizeof(* c1);
+        i <<= GRAINSIZE; 
         for (j=0; j < c1_chars_left-1 ; j+=2) {
             ((char  *)c1_out)[i+j]    =  ((char  *)  c1)[i+j+1];
             ((char  *)c1_out)[i+j+1]  =  ((char  *)  c1)[i+j];

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <emmintrin.h>
 
 #define N 16000000
 
@@ -15,89 +16,16 @@ void increase_brightness (t_pixel_rgb *rgb, int len, unsigned char inc, int N_it
 	int i,j;
     char*  chars      =  (char *) rgb;
     int    chars_len  =  len*3;
+    __m128i rgb_128i;
+    __m128i result;
+
+    __m128i incr_vector = _mm_set1_epi8(inc);
 
     for (j=0; j<N_iter; j++) {
         for (i=0; i<chars_len - 15; i += 16) {
-            if ((chars[i] + inc) > 255) {
-                chars[i]  = 255;
-            } else {
-                chars[i] += inc;
-            }
-            if ((chars[i+1] + inc) > 255) {
-                chars[i+1]  = 255;
-            } else {
-                chars[i+1] += inc;
-            }
-            if ((chars[i+2] + inc) > 255) {
-                chars[i+2]  = 255;
-            } else {
-                chars[i+2] += inc;
-            }
-            if ((chars[i+3] + inc) > 255) {
-                chars[i+3]  = 255;
-            } else {
-                chars[i+3] += inc;
-            }
-            if ((chars[i+4] + inc) > 255) {
-                chars[i+4]  = 255;
-            } else {
-                chars[i+4] += inc;
-            }
-            if ((chars[i+5] + inc) > 255) {
-                chars[i+5]  = 255;
-            } else {
-                chars[i+5] += inc;
-            }
-            if ((chars[i+6] + inc) > 255) {
-                chars[i+6]  = 255;
-            } else {
-                chars[i+6] += inc;
-            }
-            if ((chars[i+7] + inc) > 255) {
-                chars[i+7]  = 255;
-            } else {
-                chars[i+7] += inc;
-            }
-            if ((chars[i+8] + inc) > 255) {
-                chars[i+8]  = 255;
-            } else {
-                chars[i+8] += inc;
-            }
-            if ((chars[i+9] + inc) > 255) {
-                chars[i+9]  = 255;
-            } else {
-                chars[i+9] += inc;
-            }
-            if ((chars[i+10] + inc) > 255) {
-                chars[i+10]  = 255;
-            } else {
-                chars[i+10] += inc;
-            }
-            if ((chars[i+11] + inc) > 255) {
-                chars[i+11]  = 255;
-            } else {
-                chars[i+11] += inc;
-            }
-            if ((chars[i+12] + inc) > 255) {
-                chars[i+12]  = 255;
-            } else {
-                chars[i+12] += inc;
-            }
-            if ((chars[i+13] + inc) > 255) {
-                chars[i+13]  = 255;
-            } else {
-                chars[i+13] += inc;
-            }
-            if ((chars[i+14] + inc) > 255) {
-                chars[i+14]  = 255;
-            } else {
-                chars[i+14] += inc;
-            }
-            if ((chars[i+15] + inc) > 255) {
-                chars[i+15]  = 255;
-            } else {
-                chars[i+15] += inc;
-            }
+            rgb_128i = _mm_load_si128((__m128i *) &chars[i]);
+            result = _mm_adds_epu8( rgb_128i, incr_vector);
+            _mm_store_si128((__m128i *) &chars[i], result);
         }
     
         for (; i<chars_len; i++) {

@@ -24,7 +24,7 @@ void increase_brightness (t_pixel_rgb *rgb, int len, unsigned char inc, int N_it
     for (j=0; j<N_iter; j++) {
         for (i=0; i<chars_len - 15; i += 16) {
             rgb_128i = _mm_load_si128((__m128i *) &chars[i]);
-            result = _mm_adds_epu8( rgb_128i, incr_vector);
+            result   = _mm_adds_epu8(rgb_128i, incr_vector);
             _mm_store_si128((__m128i *) &chars[i], result);
         }
     
